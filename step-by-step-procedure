@@ -27,15 +27,18 @@ Step 3: On Client Machine
 Step 4: On CA Server (Sign the User Key)
 # ssh-keygen -s /etc/ssh/ca_user_key -I testuser_cert -n patcher,root -V +52w /tmp/id_ed25519.pub
 Options: 
-ssh-keygen	=  The OpenSSH utility used for generating keys and managing certificates.
--s /etc/ssh/ca_user_key	=  This tells ssh-keygen to sign a key using the private CA key located at /etc/ssh/ca_user_key
--I testuser_cert	=  This sets the certificate identity (or key ID) to testuser_cert. It is a label to help identify the certificate
--n patcher,root  =	This sets the principal name (i.e., the username that can authenticate using this certificate). This must match the remote username you are trying to login as.
--V +52w	 =  	This defines the validity period of the certificate: +52w = valid from now for 52 weeks (1 year).
-/tmp/id_ed25519.pub	=  This is the user's public key that you want to sign with the CA key.
+    ssh-keygen	            =  The OpenSSH utility used for generating keys and managing certificates.
+    -s /etc/ssh/ca_user_key	=  This tells ssh-keygen to sign a key using the private CA key located at /etc/ssh/ca_user_key
+    -I testuser_cert	    =  This sets the certificate identity (or key ID) to testuser_cert. It is a label to help identify the certificate
+    -n patcher,root         =	This sets the principal name (i.e., the username that can authenticate using this certificate). This must match the remote username you are trying to login as.
+    -V +52w	                =  	This defines the validity period of the certificate: +52w = valid from now for 52 weeks (1 year).
+    /tmp/id_ed25519.pub	    =  This is the user's public key that you want to sign with the CA key.
 
 4.2 Copy the signed key to client machine where the private is located
 # scp -rp /tmp/id_ed25519-cert.pub root@client:/root/.ssh/
 
 Step 5: From client try to authenticate with cert for server.
 # ssh -o CertificateFile=id_ed25519-cert.pub -i id_ed25519 root@server
+Options:
+    -i id_ed25519                           =  tells SSH to use the file id_ed25519
+    -o CertificateFile=id_ed25519-cert.pub  =  tells SSH to use the certificate named id_ed25519-cert.pub for authentication.
